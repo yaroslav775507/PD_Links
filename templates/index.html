@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Link Finder</title>
+    <style>
+        body {
+            background-color: #F67861;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Поиск ссылок</h1>
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Загрузить PDF</button>
+        </form>
+    </div>
+</body>
+</html>

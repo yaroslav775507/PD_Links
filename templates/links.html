@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Найденные ссылки</title>
+    <style>
+        body {
+            background-color: #F67861;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Найденные ссылки:</h1>
+    <ul>
+        {% for link in links %}
+        <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
