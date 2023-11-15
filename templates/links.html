@@ -1,20 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Найденные ссылки</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ссылки в файле</title>
     <style>
         body {
-            background-color: #F67861;
+            background: url('https://cdnn21.img.ria.ru/images/07e5/04/1e/1730734416_0:167:3072:1894_1920x0_80_0_0_f5e5fab756b3b5f7db68a7de30dc7046.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #header {
+            background-color: #cc0000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #main-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        #pdf-container {
+            width: 60%;
+            height: 600px;
+            border: 2px solid #cc0000;
+            box-sizing: border-box;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+        #links-container {
+            width: 35%;
+            border: 2px solid #cc0000;
+            box-sizing: border-box;
+            padding: 10px;
+            overflow-y: auto;
+            height: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+        #train-image {
+            width: 100px; /* Ширина изображения поезда */
+            margin-bottom: 20px; /* Добавляем отступ после изображения */
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: #cc0000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-
 <body>
-    <h1>Найденные ссылки:</h1>
-    <ul>
-        {% for link in links %}
-        <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
-        {% endfor %}
-    </ul>
+    <div id="header">
+        <h1 style="margin: 0;">Просмотр PDF и Ссылки</h1>
+    </div>
+
+    <div id="main-container">
+        <div id="pdf-container">
+            <h1 style="text-align: center; margin-top: 0;">Просмотр PDF</h1>
+            <iframe src="{{ url_for('view_pdf', filename=filename) }}" width="99%" height="85%"></iframe>
+        </div>
+
+        <div id="links-container">
+            <h1>Ссылки в файле {{ filename }}</h1>
+            <ul>
+                {% for link in links %}
+                <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
 </body>
 </html>
