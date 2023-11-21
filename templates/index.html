@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Link Finder</title>
     <style>
         body {
@@ -12,29 +14,67 @@
             height: 100vh;
             margin: 0;
         }
-        .form-container {
+        .container {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
         }
-        .uploaded-files-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 8px;
+        }
+        input, button {
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            text-decoration: none;
+            color: #0366d6;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Поиск ссылок</h1>
+    <div class="container">
+        <h1>Ранжирование</h1>
+        <form action="/search" method="post" enctype="multipart/form-data">
+            <label for="path">Path to PDFs:</label>
+            <input type="file" name="file" accept=".pdf" required>
+            <label for="prompt">Search Prompt:</label>
+            <input type="text" name="prompt" required>
+            <label for="num_matches">Number of Matches:</label>
+            <input type="number" name="num_matches" value="3" required>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Поиск ссылок</h2>
         <form method="POST" action="/upload" enctype="multipart/form-data">
             <input type="file" name="file">
             <button type="submit">Загрузить PDF</button>
         </form>
     </div>
 
-    <div class="uploaded-files-container">
+    <div class="container">
         <h2>Загруженные файлы:</h2>
         <ul>
             {% for file in uploaded_files %}
