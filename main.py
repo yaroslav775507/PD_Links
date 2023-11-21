@@ -1,18 +1,16 @@
-from flask import Flask, request, render_template, redirect
-from flask import send_from_directory
+from flask import Flask, request, render_template, redirect, send_from_directory
 import PyPDF2
 import re
-from flask import Flask, render_template, request
 import glob
 import os
-from werkzeug.utils import secure_filename
 from simplemma import lemmatize
 from index_pdf import index_document
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Adjust the value as needed
 url_pattern = r'https?://\S+'
+
 
 def extract_links_from_pdf(file_path):
     links = []
@@ -24,33 +22,32 @@ def extract_links_from_pdf(file_path):
             links.extend(found_urls)
     return links
 
+
 @app.route('/view_pdf/<filename>')
 def view_pdf(filename):
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False)
+
 @app.route('/')
-def index():
-    # Получаем список уже загруженных файлов
-    uploaded_files = os.listdir(app.config['UPLOAD_FOLDER'])
-    return render_template('index.html', uploaded_files=uploaded_files)
-# Функция адиля
+def view_or_index(filename=None):
+    if filename:
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False)
+    else:
+        uploaded_files = os.listdir(app.config['UPLOAD_FOLDER'])
+        return render_template('index.html', uploaded_files=uploaded_files)
+
+
 @app.route('/search', methods=['POST'])
 def search():
-    # Get the uploaded file
-    uploaded_file = request.files['file']
+    folder_path = request.form['folder_path']
 
-    # Save the uploaded file to the uploads folder
-    if uploaded_file:
-        filename = secure_filename(uploaded_file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        uploaded_file.save(file_path)
+    if not os.path.exists(folder_path):
+        return render_template('error.html', message='Folder does not exist.')
 
-        # Use the uploaded file for processing
-        document_paths = [file_path]
-    else:
-        # If no file is uploaded, use the provided path
-        path = request.form['path']
-        document_paths = glob.glob(os.path.join(path, '*.pdf'))
+    document_paths = glob.glob(os.path.join(folder_path, '*.pdf'))
+    if not document_paths:
+        return render_template('error.html', message='No PDF files found in the specified folder.')
 
     print('Indexing...')
     documents = [index_document(path) for path in document_paths]
@@ -87,6 +84,8 @@ def search():
         results.append(result)
 
     return render_template('results.html', results=results)
+
+
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
     if 'file' not in request.files:
@@ -98,18 +97,17 @@ def upload_pdf():
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filename)
         links = extract_links_from_pdf(filename)
-        return render_template('links.html', links=links)
+        return render_template('links.html', links=links, filename=file.filename)
+
 
 @app.route('/download/<filename>')
 def download(filename):
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-    # Ищем ссылки в загруженном PDF-файле
     links = extract_links_from_pdf(file_path)
-
     return render_template('links.html', filename=filename, links=links)
 
+
 if __name__ == '__main__':
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.mkdir(UPLOAD_FOLDER)
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
     app.run()

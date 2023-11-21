@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    #header {
+        background-color:  #F67861;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
 </head>
 <body>
+<div id="header">
     <h2>Search Results</h2>
     <ul>
         {% for result in results %}
-            <li>{{ result.path }}: "{{ result.title }}" => {{ result.score }}</li>
+        <li>{{ result.path }}: "{{ result.title }}" => {{ result.score }}</li>
         {% endfor %}
     </ul>
+</div>
 </body>
 </html>
